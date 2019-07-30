@@ -36,6 +36,8 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.pdf.codec.Base64;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.GVTBuilder;
@@ -255,6 +257,9 @@ public class PDFUtils {
                             is.close();
                         }
                     }
+                } else if (uri.getScheme().equals("data")) {
+            		data = Base64.decode(uri.toString().split(",")[1]);
+            		return Image.getInstance(data);
                 } else {
                     GetMethod getMethod = null;
                     MetricRegistry registry = context.getConfig().getMetricRegistry();
