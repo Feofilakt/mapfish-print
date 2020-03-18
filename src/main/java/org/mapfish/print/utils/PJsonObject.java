@@ -42,6 +42,10 @@ public class PJsonObject extends PJsonElement {
         this.obj = obj;
     }
 
+    public PJsonObject copy() throws JSONException {
+    	return new PJsonObject(this.parent, new JSONObject(obj, JSONObject.getNames(obj)), this.contextName);
+    }
+
     public String optString(String key) {
         return optString(key, null);
     }

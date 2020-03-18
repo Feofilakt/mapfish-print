@@ -23,8 +23,8 @@ package org.mapfish.print.utils;
  * Common parent class for the JSON wrappers.
  */
 public abstract class PJsonElement {
-    private final PJsonElement parent;
-    private final String contextName;
+    protected final PJsonElement parent;
+    protected final String contextName;
 
     protected PJsonElement(PJsonElement parent, String contextName) {
         this.parent = parent;

@@ -19,6 +19,9 @@
 
 package org.mapfish.print.map.renderers.vector;
 
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.mapfish.geo.MfFeature;
 import org.mapfish.geo.MfGeoFactory;
@@ -40,6 +43,8 @@ public class StyledMfGeoFactory extends MfGeoFactory {
         this.styleProperty = styleProperty;
     }
 
+    private static final Pattern VAR_REGEXP = Pattern.compile("\\$\\{(\\w+)\\}");
+    
     public MfFeature createFeature(String id, MfGeometry geometry, JSONObject properties) {
         PJsonObject style = null;
         if (styles != null) {
@@ -49,7 +54,26 @@ public class StyledMfGeoFactory extends MfGeoFactory {
             } else {
                 final String styleName = properties.optString(styleProperty);
                 if (styleName != null) {
-                    style = styles.getJSONObject(styleName);
+                	try {
+                		style = styles.getJSONObject(styleName).copy();
+                    	JSONObject internal = style.getInternalObj();
+                    	
+                    	Iterator<String> keys = style.keys();
+                    	while (keys.hasNext()) {
+                    	    String key = keys.next();
+                    	    String value = style.getString(key);
+                    	    java.util.regex.Matcher m = VAR_REGEXP.matcher(value);
+                    	    if (m.find()) {
+                    	    	String attrName = m.group(1);
+                    	    	String attrValue = properties.optString(attrName);
+                    	    	if (attrValue != null) {
+        							try {
+        								internal.put(key, m.replaceFirst(attrValue));
+        							} catch (JSONException e) {}
+                    	    	}
+                    	    }
+                    	}
+					} catch (JSONException e) {}
                 }
             }
         }
