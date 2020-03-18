@@ -57,6 +57,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.io.File;
+
 import org.apache.commons.httpclient.methods.GetMethod;
 import java.text.SimpleDateFormat;
 import org.apache.log4j.Logger;
@@ -198,7 +200,7 @@ public class PDFUtils {
             return Image.getInstance(uriAsFile.toURI().toURL());
         } else if (!uri.isAbsolute()) {
             //Assumption is that the file is on the local file system
-            return Image.getInstance(uri.toString());
+            return Image.getInstance(new File(context.getConfigDir(), uriAsFile.toString()).toString());
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             String path;
             if (uri.getHost() != null && uri.getPath() != null) {
